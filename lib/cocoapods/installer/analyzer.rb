@@ -414,26 +414,17 @@ module Pod
       #
       def compute_user_project_targets(target_definition, user_project)
         if link_with = target_definition.link_with
-          targets = native_targets(user_project).select { |t| link_with.include?(t.name) }
+          targets = user_project.native_targets.select { |t| link_with.include?(t.name) }
           raise Informative, "Unable to find the targets named `#{link_with.to_sentence}` to link with target definition `#{target_definition.name}`" if targets.empty?
         elsif target_definition.link_with_first_target?
-          targets = [ native_targets(user_project).first ].compact
+          targets = [ user_project.native_targets.first ].compact
           raise Informative, "Unable to find a target" if targets.empty?
         else
-          target = native_targets(user_project).find { |t| t.name == target_definition.name.to_s }
+          target = user_project.native_targets.find { |t| t.name == target_definition.name.to_s }
           targets = [ target ].compact
           raise Informative, "Unable to find a target named `#{target_definition.name.to_s}`" if targets.empty?
         end
         targets
-      end
-
-      # @return [Array<PBXNativeTarget>] Returns the user’s targets, excluding
-      #         aggregate targets.
-      #
-      def native_targets(user_project)
-        user_project.targets.reject do |target|
-          target.is_a? Xcodeproj::Project::Object::PBXAggregateTarget
-        end
       end
 
       # @return [Hash{String=>Symbol}] A hash representing the user build

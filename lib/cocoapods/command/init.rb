@@ -60,7 +60,7 @@ module Pod
           # Uncomment this line to define a global platform for your project
           # platform :ios, "6.0"
         PLATFORM
-        for target in project.targets
+        for target in project.native_targets
           podfile << target_module(target)
         end
         podfile << "\n"
